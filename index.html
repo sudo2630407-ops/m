@@ -1,364 +1,228 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📚 학교생활 MBTI 테스트</title>
-
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Segoe UI',sans-serif;
-}
-
-body{
-background:#f5f7fb;
-display:flex;
-justify-content:center;
-padding:30px;
-}
-
-.container{
-background:white;
-width:100%;
-max-width:700px;
-border-radius:20px;
-padding:35px;
-box-shadow:0 10px 30px rgba(0,0,0,.1);
-}
-
-h1{
-text-align:center;
-margin-bottom:10px;
-color:#4f46e5;
-}
-
-.subtitle{
-text-align:center;
-color:#666;
-margin-bottom:25px;
-}
-
-.progress{
-height:10px;
-background:#ddd;
-border-radius:20px;
-overflow:hidden;
-margin-bottom:25px;
-}
-
-.bar{
-height:100%;
-width:0%;
-background:#6366f1;
-transition:.3s;
-}
-
-.question{
-font-size:22px;
-font-weight:bold;
-margin-bottom:25px;
-line-height:1.5;
-}
-
-button{
-width:100%;
-padding:15px;
-font-size:17px;
-margin:10px 0;
-border:none;
-border-radius:12px;
-cursor:pointer;
-transition:.25s;
-}
-
-.answer{
-background:#eef2ff;
-}
-
-.answer:hover{
-background:#6366f1;
-color:white;
-transform:translateY(-2px);
-}
-
-.result{
-display:none;
-text-align:center;
-}
-
-.result h2{
-color:#4f46e5;
-font-size:38px;
-margin:20px 0;
-}
-
-.result p{
-line-height:1.8;
-margin:15px 0;
-color:#444;
-}
-
-.restart{
-background:#4f46e5;
-color:white;
-}
-
-.restart:hover{
-background:#3730a3;
-}
-</style>
-</head>
-<body>
-
-<div class="container">
-
-<div id="quiz">
-
-<h1>📚 학교생활 MBTI 테스트</h1>
-<div class="subtitle">
-학교에서의 행동으로 알아보는 나의 MBTI 😊
-</div>
-
-<div class="progress">
-<div class="bar" id="bar"></div>
-</div>
-
-<div id="count"></div>
-
-<div class="question" id="question"></div>
-
-<div id="answers"></div>
-
-</div>
-
-<div class="result" id="result">
-<h1>🎉 테스트 완료!</h1>
-
-<h2 id="mbti"></h2>
-
-<p id="desc"></p>
-
-<button class="restart" onclick="location.reload()">
-🔄 다시 하기
-</button>
-
-</div>
-
-</div>
-
-<script>
-
-const questions=[
+const questions = [
 
 {
-q:"🏫 아침에 학교에 오면?",
-a1:"친구들과 먼저 이야기한다",
-a2:"조용히 자리에 앉는다",
+q:"🎒 새 학기가 시작! 새로운 반에 들어갔다.",
+a1:"먼저 친구들에게 말을 건다 😄",
+a2:"누가 먼저 말 걸어주길 기다린다 🙂",
 type1:"E",
 type2:"I"
 },
 
 {
-q:"🙋 발표 시간이 되었다!",
-a1:"손부터 든다",
-a2:"다른 친구를 기다린다",
+q:"🍛 급식 줄에서 가장 친한 친구가 안 보인다.",
+a1:"다른 친구들과 같이 먹는다 😆",
+a2:"혼자 먹거나 기다린다 😊",
 type1:"E",
 type2:"I"
 },
 
 {
-q:"🍱 점심시간에는?",
-a1:"여러 친구들과 먹는다",
-a2:"친한 친구 몇 명과 먹는다",
+q:"🎤 선생님이 발표할 사람을 찾고 있다.",
+a1:"'제가 해볼게요!' ✋",
+a2:"눈을 최대한 피한다 👀",
 type1:"E",
 type2:"I"
 },
 
 {
-q:"📝 숙제를 할 때",
-a1:"계획보다 느낌대로 한다",
-a2:"순서를 정해둔다",
-type1:"P",
-type2:"J"
+q:"🏃 체육대회 응원전!",
+a1:"응원단에서 열심히 춤춘다 💃",
+a2:"조용히 응원한다 👏",
+type1:"E",
+type2:"I"
 },
 
 {
-q:"📅 시험기간에는",
-a1:"벼락치기도 괜찮다",
-a2:"미리미리 준비한다",
-type1:"P",
-type2:"J"
+q:"📅 시험이 2주 남았다.",
+a1:"공부 계획표부터 만든다 📖",
+a2:"아직은 여유를 즐긴다 😎",
+type1:"J",
+type2:"P"
 },
 
 {
-q:"🎒 준비물을 챙길 때",
-a1:"빠뜨리는 경우가 있다",
-a2:"전날 미리 확인한다",
-type1:"P",
-type2:"J"
+q:"📝 수행평가 마감이 내일이다.",
+a1:"며칠 전에 이미 끝냈다 😌",
+a2:"오늘 밤이 진짜 시작이다 🔥",
+type1:"J",
+type2:"P"
 },
 
 {
-q:"🔬 과학 실험 시간!",
-a1:"새로운 방법을 시도한다",
-a2:"설명서를 그대로 따른다",
+q:"🎒 가방을 열어보니 준비물이 없다!",
+a1:"평소엔 거의 이런 일이 없다 👍",
+a2:"'아 또 깜빡했다...' 😂",
+type1:"J",
+type2:"P"
+},
+
+{
+q:"🔬 과학 시간, 새로운 실험을 한다.",
+a1:"'이렇게 하면 더 재밌지 않을까?' 🤔",
+a2:"설명서를 그대로 따라 한다 📄",
 type1:"N",
 type2:"S"
 },
 
 {
-q:"📖 문제를 풀 때",
-a1:"아이디어부터 떠올린다",
-a2:"사실을 먼저 확인한다",
+q:"📖 소설을 읽을 때 더 재미있는 것은?",
+a1:"숨겨진 의미를 상상하기 🌌",
+a2:"이야기 자체를 즐기기 📚",
 type1:"N",
 type2:"S"
 },
 
 {
-q:"🎨 수행평가에서",
-a1:"창의적인 아이디어를 낸다",
-a2:"예시를 참고한다",
+q:"🏫 학교 축제 아이디어를 낸다면?",
+a1:"아무도 안 해본 걸 해보고 싶다 🚀",
+a2:"작년에 인기 있었던 걸 발전시킨다 ⭐",
 type1:"N",
 type2:"S"
 },
 
 {
-q:"🤝 친구가 고민 상담을 한다",
-a1:"공감부터 해준다",
-a2:"해결 방법을 알려준다",
+q:"😢 친구가 시험을 망쳐서 울고 있다.",
+a1:"먼저 위로해준다 🤗",
+a2:"다음 시험 준비 방법을 알려준다 📖",
 type1:"F",
 type2:"T"
 },
 
 {
-q:"⚽ 조별활동 중 갈등이 생기면",
-a1:"분위기를 먼저 생각한다",
-a2:"효율적으로 해결한다",
-type1:"F",
-type2:"T"
-},
-
-{
-q:"📢 친구가 실수했다면",
-a1:"기분이 상하지 않게 말한다",
-a2:"바로 문제를 알려준다",
+q:"👥 조별 과제에서 친구가 일을 안 했다.",
+a1:"이유를 먼저 물어본다 🙂",
+a2:"역할은 지켜야 한다고 말한다 💬",
 type1:"F",
 type2:"T"
 }
 
 ];
 
-const descriptions={
+const questions = [
 
-"INTJ":"🧠 전략가형! 계획을 세우는 것을 좋아하며 목표를 향해 꾸준히 나아갑니다.",
+{
+q:"🎒 새 학기가 시작! 새로운 반에 들어갔다.",
+a1:"먼저 친구들에게 말을 건다 😄",
+a2:"누가 먼저 말 걸어주길 기다린다 🙂",
+type1:"E",
+type2:"I"
+},
 
-"INTP":"💡 아이디어가 넘치는 탐구형! 궁금한 것이 생기면 끝까지 파고듭니다.",
+{
+q:"🍛 급식 줄에서 가장 친한 친구가 안 보인다.",
+a1:"다른 친구들과 같이 먹는다 😆",
+a2:"혼자 먹거나 기다린다 😊",
+type1:"E",
+type2:"I"
+},
 
-"ENTJ":"🚀 리더형! 친구들을 이끌며 목표를 이루는 것을 좋아합니다.",
+{
+q:"🎤 선생님이 발표할 사람을 찾고 있다.",
+a1:"'제가 해볼게요!' ✋",
+a2:"눈을 최대한 피한다 👀",
+type1:"E",
+type2:"I"
+},
 
-"ENTP":"🎯 도전형! 새로운 아이디어와 토론을 즐깁니다.",
+{
+q:"🏃 체육대회 응원전!",
+a1:"응원단에서 열심히 춤춘다 💃",
+a2:"조용히 응원한다 👏",
+type1:"E",
+type2:"I"
+},
 
-"INFJ":"🌱 배려심이 깊고 친구들의 고민을 잘 들어줍니다.",
+{
+q:"📅 시험이 2주 남았다.",
+a1:"공부 계획표부터 만든다 📖",
+a2:"아직은 여유를 즐긴다 😎",
+type1:"J",
+type2:"P"
+},
 
-"INFP":"🌸 감성이 풍부하고 창의적인 학생입니다.",
+{
+q:"📝 수행평가 마감이 내일이다.",
+a1:"며칠 전에 이미 끝냈다 😌",
+a2:"오늘 밤이 진짜 시작이다 🔥",
+type1:"J",
+type2:"P"
+},
 
-"ENFJ":"😊 모두를 챙기는 따뜻한 리더입니다.",
+{
+q:"🎒 가방을 열어보니 준비물이 없다!",
+a1:"평소엔 거의 이런 일이 없다 👍",
+a2:"'아 또 깜빡했다...' 😂",
+type1:"J",
+type2:"P"
+},
 
-"ENFP":"🎉 밝고 활발하며 새로운 친구를 쉽게 사귑니다.",
+{
+q:"🔬 과학 시간, 새로운 실험을 한다.",
+a1:"'이렇게 하면 더 재밌지 않을까?' 🤔",
+a2:"설명서를 그대로 따라 한다 📄",
+type1:"N",
+type2:"S"
+},
 
-"ISTJ":"📚 성실하고 책임감이 강한 모범생 스타일!",
+{
+q:"📖 소설을 읽을 때 더 재미있는 것은?",
+a1:"숨겨진 의미를 상상하기 🌌",
+a2:"이야기 자체를 즐기기 📚",
+type1:"N",
+type2:"S"
+},
 
-"ISFJ":"💖 조용하지만 친구들을 잘 도와주는 학생입니다.",
+{
+q:"🏫 학교 축제 아이디어를 낸다면?",
+a1:"아무도 안 해본 걸 해보고 싶다 🚀",
+a2:"작년에 인기 있었던 걸 발전시킨다 ⭐",
+type1:"N",
+type2:"S"
+},
 
-"ESTJ":"📋 체계적이고 규칙을 잘 지킵니다.",
+{
+q:"😢 친구가 시험을 망쳐서 울고 있다.",
+a1:"먼저 위로해준다 🤗",
+a2:"다음 시험 준비 방법을 알려준다 📖",
+type1:"F",
+type2:"T"
+},
 
-"ESFJ":"🥰 친구들과 협력하는 것을 좋아합니다.",
-
-"ISTP":"🔧 직접 해보며 배우는 실전형!",
-
-"ISFP":"🎨 예술 감각이 뛰어나고 배려심이 있습니다.",
-
-"ESTP":"⚡ 활동적이고 모험을 좋아합니다.",
-
-"ESFP":"🎈 분위기 메이커! 모두와 잘 어울립니다."
-
-};
-
-let index=0;
-
-let score={
-E:0,I:0,
-S:0,N:0,
-T:0,F:0,
-J:0,P:0
-};
-
-const question=document.getElementById("question");
-const answers=document.getElementById("answers");
-const bar=document.getElementById("bar");
-const count=document.getElementById("count");
-
-function showQuestion(){
-
-count.innerHTML=`<b>${index+1}</b> / ${questions.length}`;
-
-bar.style.width=((index)/questions.length*100)+"%";
-
-const q=questions[index];
-
-question.innerHTML=q.q;
-
-answers.innerHTML=`
-<button class="answer" onclick="choose('${q.type1}')">${q.a1}</button>
-<button class="answer" onclick="choose('${q.type2}')">${q.a2}</button>
-`;
-
+{
+q:"👥 조별 과제에서 친구가 일을 안 했다.",
+a1:"이유를 먼저 물어본다 🙂",
+a2:"역할은 지켜야 한다고 말한다 💬",
+type1:"F",
+type2:"T"
 }
 
-function choose(type){
+];
 
-score[type]++;
+"ENFP":`
+🎉 ENFP - 재기발랄한 활동가
 
-index++;
+학교에서 누구와도 금방 친해지는 인기쟁이입니다.
+새로운 활동이나 이벤트를 정말 좋아합니다.
 
-if(index<questions.length){
+🏫 학교생활
+• 축제와 체육대회를 가장 기다립니다.
+• 조별활동에서 분위기를 띄웁니다.
+• 새로운 친구를 쉽게 사귑니다.
 
-showQuestion();
+💪 장점
+✔ 밝고 긍정적
+✔ 창의적인 아이디어가 많음
+✔ 친구를 잘 챙김
 
-}else{
+⚠ 이런 점은 조심!
+• 계획을 끝까지 지키지 못할 때가 있습니다.
+• 재미있는 일이 생기면 집중력이 흔들릴 수 있습니다.
 
-showResult();
+🎯 잘 어울리는 활동
+🎤 방송부
+🎭 연극부
+🤝 학생회
 
-}
-
-}
-
-function showResult(){
-
-bar.style.width="100%";
-
-document.getElementById("quiz").style.display="none";
-
-document.getElementById("result").style.display="block";
-
-const mbti=
-(score.E>=score.I?"E":"I")+
-(score.S>=score.N?"S":"N")+
-(score.T>=score.F?"T":"F")+
-(score.J>=score.P?"J":"P");
-
-document.getElementById("mbti").innerHTML=mbti;
-
-document.getElementById("desc").innerHTML=descriptions[mbti];
-
-}
-
-showQuestion();
-
-</script>
-
-</body>
-</html>
+✨ 한줄 요약
+"학교의 분위기 메이커!"
+`,
